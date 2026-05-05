@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
@@ -34,18 +36,11 @@ function App() {
   const toastTimer = useRef(null);
 
   useEffect(() => {
-    return () => {
-      if (toastTimer.current) {
-        clearTimeout(toastTimer.current);
-      }
-    };
+    return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
   }, []);
 
   const showToast = (message) => {
-    if (toastTimer.current) {
-      clearTimeout(toastTimer.current);
-    }
-
+    if (toastTimer.current) clearTimeout(toastTimer.current);
     setToast({ visible: true, message });
     toastTimer.current = setTimeout(() => {
       setToast((current) => ({ ...current, visible: false }));
@@ -54,14 +49,23 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate replace to="/home" />} />
-        <Route path="/home" element={<HomePage showToast={showToast} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="*" element={<Navigate replace to="/home" />} />
-      </Routes>
-      <Toast visible={toast.visible} message={toast.message} />
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Navigate replace to="/home" />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage showToast={showToast} />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/register" element={<Register />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="*" element={<Navigate replace to="/home" />} />
+        </Routes>
+        <Toast visible={toast.visible} message={toast.message} />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
