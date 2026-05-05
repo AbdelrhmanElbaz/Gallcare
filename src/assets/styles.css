@@ -1119,3 +1119,25 @@ footer {
     display: none;
   }
 }
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scanMove {
+  0%   { top: -2px; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { top: calc(100% + 2px); opacity: 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hover overlay fix */
+.upload-zone:hover .change-overlay {
+  opacity: 1 !important;
+}

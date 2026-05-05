@@ -14,6 +14,8 @@ import Footer from "./components/Footer";
 import Toast from "./components/Toast";
 import Register from "./components/Register";
 import SignIn from "./components/SignIn";
+import ProcessPage from "./components/ProcessPage";
+import ProfilePage from "./components/ProfilePage";
 
 function HomePage({ showToast }) {
   return (
@@ -36,7 +38,9 @@ function App() {
   const toastTimer = useRef(null);
 
   useEffect(() => {
-    return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
   }, []);
 
   const showToast = (message) => {
@@ -63,6 +67,22 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="*" element={<Navigate replace to="/home" />} />
+          <Route
+            path="/process"
+            element={
+              <ProtectedRoute>
+                <ProcessPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Toast visible={toast.visible} message={toast.message} />
       </AuthProvider>

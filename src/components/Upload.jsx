@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ← أضفنا هذا
 import { uploadService } from "../services/upload.service.js";
 
 const formatSize = (bytes) => {
@@ -12,10 +13,12 @@ const formatDate = (dateStr) => {
 };
 
 export default function Upload({ showToast }) {
+  const navigate = useNavigate(); // ← أضفنا هذا
   const [previews, setPreviews] = useState([]);
   const [history, setHistory] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [lastUploaded, setLastUploaded] = useState(null); // ← أضفنا هذا
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -29,6 +32,7 @@ export default function Upload({ showToast }) {
     const selected = Array.from(files);
     setError("");
     setUploading(true);
+    setLastUploaded(null); // ← reset
 
     try {
       const results = await Promise.all(
@@ -40,6 +44,7 @@ export default function Upload({ showToast }) {
       );
 
       setHistory((prev) => [...results, ...prev]);
+      setLastUploaded(selected[selected.length - 1]); // ← احفظ آخر ملف رُفع
       showToast(
         selected.length === 1
           ? "Image uploaded successfully!"
@@ -105,6 +110,20 @@ export default function Upload({ showToast }) {
         ))}
       </div>
 
+      {/* ── زر التحليل بالذكاء الاصطناعي ── */}
+      {lastUploaded && !uploading && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <button
+            className="btn-primary"
+            type="button"
+            onClick={() => navigate("/process")}
+            style={{ display: "flex", alignItems: "center", gap: 10, fontSize: "1rem" }}
+          >
+            🔬 Analyze with AI
+          </button>
+        </div>
+      )}
+
       {history.length > 0 && (
         <div style={{ maxWidth: 560, margin: "32px auto 0" }}>
           <p style={{
@@ -139,9 +158,29 @@ export default function Upload({ showToast }) {
                     </p>
                   </div>
                 </div>
-                <span style={{ fontSize: "0.85rem", color: "var(--muted)" }}>
-                  {item.created_at ? formatDate(item.created_at) : "—"}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: "0.85rem", color: "var(--muted)" }}>
+                    {item.created_at ? formatDate(item.created_at) : "—"}
+                  </span>
+                  {/* ── زر Analyze لكل صورة في التاريخ ── */}
+                  <button
+                    type="button"
+                    onClick={() => navigate("/process")}
+                    style={{
+                      background: "var(--teal-light)",
+                      color: "var(--teal-dark)",
+                      border: "1px solid rgba(10,191,170,0.3)",
+                      borderRadius: 50,
+                      padding: "5px 14px",
+                      fontSize: "0.78rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    Analyze
+                  </button>
+                </div>
               </div>
             ))}
           </div>

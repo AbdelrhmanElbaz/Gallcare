@@ -28,10 +28,18 @@ export default function Navbar() {
       {isAuthenticated ? (
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           {user?.first_name && (
-            <span style={{ fontSize: "0.88rem", color: "var(--muted)", fontWeight: 500 }}>
+            <span
+              style={{
+                cursor: "pointer",
+                color: "var(--teal)",
+                fontWeight: 600,
+              }}
+              onClick={() => navigate("/profile")}
+            >
               {user.first_name}
             </span>
           )}
+
           <button
             onClick={handleLogout}
             style={{
@@ -45,14 +53,22 @@ export default function Navbar() {
               color: "var(--navy)",
               transition: "border-color 0.2s, color 0.2s",
             }}
-            onMouseOver={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
-            onMouseOut={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--navy)"; }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = "var(--accent)";
+              e.currentTarget.style.color = "var(--accent)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.color = "var(--navy)";
+            }}
           >
             Sign Out
           </button>
         </div>
       ) : (
-        <a href="#help" className="nav-cta">Get Help Now</a>
+        <a href="#help" className="nav-cta">
+          Get Help Now
+        </a>
       )}
     </nav>
   );
